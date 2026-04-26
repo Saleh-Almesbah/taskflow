@@ -1,125 +1,114 @@
 # TaskFlow
 
-A full-stack task management app with AI-powered prioritization.
+A full-stack task management web application with AI-powered prioritization.
 
-**Live demo:** [frontend link] · [backend link]
+**Live Demo:** [taskflow-nine-nu.vercel.app](https://taskflow-nine-nu.vercel.app)  
+**Backend API:** [taskflow-production-aae4.up.railway.app](https://taskflow-production-aae4.up.railway.app)  
+**GitHub:** [github.com/Saleh-Almesbah/taskflow](https://github.com/Saleh-Almesbah/taskflow)
 
 ---
 
-## Tech stack
+## Tech Stack
 
 | Layer | Tech |
 |---|---|
 | Frontend | React 19, Vite, Tailwind CSS |
 | Backend | Node.js, Express |
 | Database + Auth | Supabase (PostgreSQL) |
-| AI | Anthropic Claude API |
-| Frontend deploy | Vercel |
-| Backend deploy | Render |
+| AI | Google Gemini API |
+| Frontend Deploy | Vercel |
+| Backend Deploy | Railway |
 
 ---
 
 ## Features
 
-- Email/password authentication
+- Email/password authentication with confirmation
 - Create, edit, delete, and complete tasks
-- Priority levels (High / Medium / Low)
-- Status tracking (To Do / In Progress / Done)
+- Priority levels: High / Medium / Low
+- Status tracking: To Do / In Progress / Done
 - Due dates with overdue highlighting
 - Category labels
 - Search, filter by status & priority, sort by date or priority
-- **AI Prioritizer** — Claude analyzes your active tasks and suggests the optimal order with reasoning and productivity tips
+- Today view — shows tasks due today and overdue items
+- Completed view — history of finished tasks
+- Account page — profile stats and password change
+- Settings page — customize task defaults
+- **AI Prioritizer** — analyzes your active tasks and suggests the optimal order with reasoning and productivity tips
 
 ---
 
-## Local setup
+## Local Setup
 
 ### 1. Clone the repo
 
 ```bash
-git clone <your-github-repo-url>
+git clone https://github.com/Saleh-Almesbah/taskflow.git
 cd taskflow
 ```
 
 ### 2. Set up Supabase
 
 1. Create a project at [supabase.com](https://supabase.com)
-2. Go to **SQL Editor** → **New query**, paste the contents of `database.sql`, and run it
-3. In **Project Settings → API**, copy:
-   - Project URL
-   - `anon` public key
-   - `service_role` secret key
+2. Go to **SQL Editor → New query**, paste the contents of `database.sql`, and run it
+3. In **Authentication → URL Configuration**, set Site URL to your frontend URL
 
-### 3. Get your Anthropic API key
-
-Go to [console.anthropic.com](https://console.anthropic.com) → API Keys → Create key.
-
-### 4. Backend
+### 3. Backend
 
 ```bash
 cd backend
 cp .env.example .env
-# Fill in your values in .env
+# Fill in your values
 npm install
 npm run dev
 ```
 
-`.env` for backend:
-```
+```env
 PORT=4000
-SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_URL=your_supabase_project_url
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=your_gemini_api_key
 FRONTEND_URL=http://localhost:5173
 ```
 
-### 5. Frontend
+### 4. Frontend
 
 ```bash
 cd frontend
 cp .env.example .env
-# Fill in your values in .env
+# Fill in your values
 npm install
 npm run dev
 ```
 
-`.env` for frontend:
-```
-VITE_SUPABASE_URL=https://xxxx.supabase.co
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_anon_key
 VITE_API_URL=http://localhost:4000
 ```
 
-Open [http://localhost:5173](http://localhost:5173).
+Open [http://localhost:5173](http://localhost:5173)
 
 ---
 
 ## Deployment
 
 ### Frontend → Vercel
+1. Import GitHub repo on [vercel.com](https://vercel.com)
+2. Set root directory to `frontend`
+3. Add environment variables
+4. Deploy
 
-1. Push your repo to GitHub
-2. Go to [vercel.com](https://vercel.com) → New Project → Import your repo
-3. Set **Root Directory** to `frontend`
-4. Add environment variables (same as `.env` but with your live backend URL for `VITE_API_URL`)
-5. Deploy
-
-### Backend → Render
-
-1. Go to [render.com](https://render.com) → New → Web Service → Connect your repo
-2. Set **Root Directory** to `backend`
-3. Build command: `npm install`
-4. Start command: `npm start`
-5. Add environment variables (same as `.env` but set `FRONTEND_URL` to your Vercel URL)
-6. Deploy
-
-### Database
-
-Already live on Supabase — no extra steps needed.
+### Backend → Railway
+1. Import GitHub repo on [railway.app](https://railway.app)
+2. Set root directory to `backend`
+3. Set start command to `npm start`
+4. Add environment variables
+5. Generate a domain under Settings → Networking
 
 ---
 
-## Database schema
+## Database Schema
 
 ```sql
 tasks (
@@ -140,10 +129,21 @@ Row Level Security ensures users can only access their own tasks.
 
 ---
 
-## AI usage notes
+## AI Feature
 
-- **Tool used:** Anthropic Claude API (claude-haiku-4-5 model)
-- **Feature:** The "AI Prioritize" button sends all active tasks to Claude with a structured prompt asking for a prioritized JSON response
-- **What Claude returns:** ordered task IDs, a strategy summary, and 3 productivity tips
-- **What was accepted:** the core prompt structure and JSON parsing approach
-- **What was adjusted:** added a fallback regex JSON extractor in case Claude wraps the JSON in markdown code blocks
+The **AI Prioritizer** button sends all active tasks to Google Gemini with a structured prompt. The AI returns:
+- A recommended task order based on deadlines, priorities, and workload
+- A strategy summary explaining the reasoning
+- 3 actionable productivity tips
+
+**Model used:** `gemini-1.5-flash`  
+**Why:** Fast, free tier available, reliable JSON output
+
+---
+
+## AI Usage Notes
+
+- **Tool:** Google Gemini API (`gemini-1.5-flash`)
+- **How:** Structured prompt engineering — tasks are formatted as a numbered list with metadata, and the model is asked to return strict JSON
+- **What was accepted:** Core prompt structure, JSON parsing with regex fallback
+- **What was adjusted:** Added specific formatting instructions ("no markdown, no code blocks") to ensure clean JSON output every time
