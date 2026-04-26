@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background-color: #F4F1FA;
+    color: #332F3A;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .animation-delay-2000 { animation-delay: 2000ms; }
+  .animation-delay-4000 { animation-delay: 4000ms; }
+  .animation-delay-6000 { animation-delay: 6000ms; }
+
+  .font-nunito { font-family: 'Nunito', sans-serif; }
+
+  .clay-text-gradient {
+    background: linear-gradient(135deg, #332F3A 20%, #7C3AED 60%, #DB2777 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-clay {
+    @apply inline-flex items-center justify-center gap-2 h-12 px-6
+           rounded-[20px] font-bold text-sm tracking-wide
+           bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] text-white
+           shadow-clayButton
+           transition-all duration-200
+           hover:-translate-y-1 hover:shadow-clayButtonHover
+           active:scale-[0.92] active:shadow-clayPressed
+           focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#7C3AED]/30
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  }
+
+  .btn-clay-secondary {
+    @apply inline-flex items-center justify-center gap-2 h-12 px-6
+           rounded-[20px] font-bold text-sm tracking-wide
+           bg-white text-[#332F3A]
+           shadow-clayButton
+           transition-all duration-200
+           hover:-translate-y-1 hover:shadow-clayButtonHover
+           active:scale-[0.92] active:shadow-clayPressed
+           focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#7C3AED]/20
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-clay-ghost {
+    @apply inline-flex items-center justify-center gap-2 h-10 px-4
+           rounded-[16px] font-semibold text-sm
+           text-[#635F69] hover:text-[#332F3A] hover:bg-white/70
+           transition-all duration-200
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]/30;
+  }
+
+  /* ── Inputs ── */
+  .input-clay {
+    @apply w-full h-14 px-5 rounded-[20px] text-sm font-medium
+           bg-[#EFEBF5] text-[#332F3A] border-0
+           shadow-clayPressed
+           placeholder:text-[#9995A0]
+           transition-all duration-200
+           focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#7C3AED]/20;
+  }
+
+  /* ── Cards ── */
+  .card-clay {
+    @apply relative overflow-hidden rounded-[32px]
+           bg-white/70 backdrop-blur-xl
+           shadow-clayCard
+           transition-all duration-500;
+  }
+
+  .card-clay-hover {
+    @apply card-clay hover:-translate-y-2 hover:shadow-clayCardHover;
+  }
+
+  /* ── Labels ── */
+  .label-clay {
+    @apply block text-xs font-bold uppercase tracking-widest text-[#635F69] mb-2;
+  }
+
+  /* ── Badges ── */
+  .badge-clay {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold;
+  }
+}
