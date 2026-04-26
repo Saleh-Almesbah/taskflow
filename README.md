@@ -14,7 +14,7 @@ A full-stack task management web application with AI-powered prioritization.
 | Frontend | React 19, Vite, Tailwind CSS |
 | Backend | Node.js, Express |
 | Database + Auth | Supabase (PostgreSQL) |
-| AI | Google Gemini API |
+| AI | OpenRouter API |
 | Frontend Deploy | Vercel |
 | Backend Deploy | Railway |
 
