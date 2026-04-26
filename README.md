@@ -2,9 +2,8 @@
 
 A full-stack task management web application with AI-powered prioritization.
 
-**Live Demo:** [taskflow-nine-nu.vercel.app](https://taskflow-nine-nu.vercel.app)  
-**Backend API:** [taskflow-production-aae4.up.railway.app](https://taskflow-production-aae4.up.railway.app)  
-**GitHub:** [github.com/Saleh-Almesbah/taskflow](https://github.com/Saleh-Almesbah/taskflow)
+**Live Demo (website link) :** [taskflow-nine-nu.vercel.app](https://taskflow-nine-nu.vercel.app)  
+
 
 ---
 
