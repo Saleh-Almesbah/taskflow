@@ -1,14 +1,10 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Router } from 'express';
 import supabase from '../lib/supabase.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 router.use(requireAuth);
 
-// POST /api/ai/prioritize — analyze tasks and suggest priority order + tips
 router.post('/prioritize', async (req, res) => {
   try {
     const { data: tasks, error } = await supabase
@@ -28,31 +24,49 @@ router.post('/prioritize', async (req, res) => {
       (t.category ? ` | Category: ${t.category}` : '')
     ).join('\n');
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
     const prompt = `You are a productivity expert. Analyze these tasks and provide a smart prioritization plan.
 
 Tasks:
 ${taskList}
 
-Respond with valid JSON only, no markdown, no code blocks, just the raw JSON object:
+Respond with valid JSON only, no markdown, no code blocks, just the raw JSON:
 {
   "ordered_ids": ["id1", "id2", ...],
   "summary": "2-3 sentence overview of the strategy",
   "tips": ["tip 1", "tip 2", "tip 3"]
 }
 
-Consider: deadlines, current priority labels, task dependencies implied by descriptions, and cognitive load.`;
+Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
 
-    const result = await model.generateContent(prompt);
-    const raw = result.response.text().trim();
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': process.env.FRONTEND_URL,
+        'X-Title': 'TaskFlow',
+      },
+      body: JSON.stringify({
+        model: 'meta-llama/llama-3.1-8b-instruct:free',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1024,
+      }),
+    });
+
+    const aiData = await response.json();
+
+    if (!response.ok) {
+      console.error('OpenRouter error:', aiData);
+      return res.status(500).json({ error: 'AI service error. Please try again.' });
+    }
+
+    const raw = aiData.choices[0].message.content.trim();
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
 
     const orderedTasks = parsed.ordered_ids
       .map(id => tasks.find(t => t.id === id))
       .filter(Boolean);
-
     const remaining = tasks.filter(t => !parsed.ordered_ids.includes(t.id));
 
     res.json({
@@ -62,12 +76,7 @@ Consider: deadlines, current priority labels, task dependencies implied by descr
     });
   } catch (err) {
     console.error('AI prioritize error:', err.message);
-    const msg = err.message?.includes('API_KEY_INVALID')
-      ? 'Invalid Gemini API key. Check your backend .env file.'
-      : err.message?.includes('quota')
-      ? 'AI quota reached. Please try again later.'
-      : 'AI analysis failed. Please try again.';
-    res.status(500).json({ error: msg });
+    res.status(500).json({ error: 'AI analysis failed. Please try again.' });
   }
 });
 
