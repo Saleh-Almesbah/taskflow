@@ -1,8 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import ClayBlobs from './ClayBlobs.jsx';
 import toast from 'react-hot-toast';
+
+function useDarkMode() {
+  const [dark, setDark] = useState(() => {
+    const saved = localStorage.getItem('tf_dark');
+    return saved ? saved === 'true' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem('tf_dark', dark);
+  }, [dark]);
+
+  return [dark, setDark];
+}
 
 const NAV = [
   {
@@ -51,6 +65,7 @@ export default function Layout({ children }) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dark, setDark] = useDarkMode();
 
   async function handleSignOut() {
     await signOut();
@@ -80,6 +95,18 @@ export default function Layout({ children }) {
         <p className="text-[10px] font-black uppercase tracking-widest text-[#9995A0] px-4 mt-6 mb-3 pt-4">Account</p>
         {BOTTOM_NAV.map(item => <NavItem key={item.to} {...item} onClick={() => setMobileOpen(false)} />)}
       </div>
+
+      {/* Dark mode toggle */}
+      <button
+        onClick={() => setDark(d => !d)}
+        className="flex items-center gap-3 px-4 py-2.5 rounded-[20px] text-sm font-bold transition-all duration-300 text-[#635F69] hover:bg-white/70 hover:text-[#332F3A] dark:text-[#9B95A8] dark:hover:bg-white/10 dark:hover:text-[#EDE9F7] w-full"
+      >
+        {dark
+          ? <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          : <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        }
+        {dark ? 'Light Mode' : 'Dark Mode'}
+      </button>
 
       {/* User footer */}
       <div className="card-clay p-3 mt-2">

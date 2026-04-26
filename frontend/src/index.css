@@ -11,6 +11,12 @@
     color: #332F3A;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    background-color: #1C1728;
+    color: #EDE9F7;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -25,9 +31,7 @@
   .animation-delay-2000 { animation-delay: 2000ms; }
   .animation-delay-4000 { animation-delay: 4000ms; }
   .animation-delay-6000 { animation-delay: 6000ms; }
-
   .font-nunito { font-family: 'Nunito', sans-serif; }
-
   .clay-text-gradient {
     background: linear-gradient(135deg, #332F3A 20%, #7C3AED 60%, #DB2777 100%);
     -webkit-background-clip: text;
@@ -37,13 +41,11 @@
 }
 
 @layer components {
-  /* ── Buttons ── */
   .btn-clay {
     @apply inline-flex items-center justify-center gap-2 h-12 px-6
            rounded-[20px] font-bold text-sm tracking-wide
            bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] text-white
-           shadow-clayButton
-           transition-all duration-200
+           shadow-clayButton transition-all duration-200
            hover:-translate-y-1 hover:shadow-clayButtonHover
            active:scale-[0.92] active:shadow-clayPressed
            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#7C3AED]/30
@@ -53,9 +55,7 @@
   .btn-clay-secondary {
     @apply inline-flex items-center justify-center gap-2 h-12 px-6
            rounded-[20px] font-bold text-sm tracking-wide
-           bg-white text-[#332F3A]
-           shadow-clayButton
-           transition-all duration-200
+           shadow-clayButton transition-all duration-200
            hover:-translate-y-1 hover:shadow-clayButtonHover
            active:scale-[0.92] active:shadow-clayPressed
            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#7C3AED]/20
@@ -64,41 +64,98 @@
 
   .btn-clay-ghost {
     @apply inline-flex items-center justify-center gap-2 h-10 px-4
-           rounded-[16px] font-semibold text-sm
-           text-[#635F69] hover:text-[#332F3A] hover:bg-white/70
-           transition-all duration-200
+           rounded-[16px] font-semibold text-sm transition-all duration-200
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]/30;
   }
 
-  /* ── Inputs ── */
   .input-clay {
-    @apply w-full h-14 px-5 rounded-[20px] text-sm font-medium
-           bg-[#EFEBF5] text-[#332F3A] border-0
-           shadow-clayPressed
-           placeholder:text-[#9995A0]
-           transition-all duration-200
-           focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#7C3AED]/20;
+    @apply w-full h-14 px-5 rounded-[20px] text-sm font-medium border-0
+           shadow-clayPressed transition-all duration-200
+           focus:outline-none focus:ring-4 focus:ring-[#7C3AED]/20;
   }
 
-  /* ── Cards ── */
   .card-clay {
     @apply relative overflow-hidden rounded-[32px]
-           bg-white/70 backdrop-blur-xl
-           shadow-clayCard
-           transition-all duration-500;
+           backdrop-blur-xl shadow-clayCard transition-all duration-500;
   }
 
   .card-clay-hover {
     @apply card-clay hover:-translate-y-2 hover:shadow-clayCardHover;
   }
 
-  /* ── Labels ── */
   .label-clay {
-    @apply block text-xs font-bold uppercase tracking-widest text-[#635F69] mb-2;
+    @apply block text-xs font-bold uppercase tracking-widest mb-2;
   }
 
-  /* ── Badges ── */
   .badge-clay {
     @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold;
   }
 }
+
+/* ── Light mode component colors ── */
+.btn-clay-secondary { background-color: white; color: #332F3A; }
+.btn-clay-ghost     { color: #635F69; }
+.btn-clay-ghost:hover { color: #332F3A; background-color: rgba(255,255,255,0.7); }
+.input-clay         { background-color: #EFEBF5; color: #332F3A; }
+.input-clay::placeholder { color: #9995A0; }
+.input-clay:focus   { background-color: white; }
+.card-clay          { background-color: rgba(255,255,255,0.70); }
+.label-clay         { color: #635F69; }
+
+/* ── Dark mode component colors ── */
+.dark .btn-clay-secondary { background-color: #2E2447; color: #EDE9F7; }
+.dark .btn-clay-ghost     { color: #9B95A8; }
+.dark .btn-clay-ghost:hover { color: #EDE9F7; background-color: rgba(255,255,255,0.08); }
+.dark .input-clay         { background-color: #2E2447; color: #EDE9F7; }
+.dark .input-clay::placeholder { color: #6B6480; }
+.dark .input-clay:focus   { background-color: #3A2D5A; }
+.dark .card-clay          { background-color: rgba(38,30,58,0.80); }
+.dark .label-clay         { color: #9B95A8; }
+
+/* ── Dark mode: override hardcoded Tailwind arbitrary colors ── */
+.dark .text-\[\#332F3A\] { color: #EDE9F7; }
+.dark .text-\[\#635F69\] { color: #9B95A8; }
+.dark .text-\[\#9995A0\] { color: #6B6480; }
+.dark .bg-\[\#F4F1FA\]   { background-color: #1C1728; }
+.dark .bg-\[\#EFEBF5\]   { background-color: #2E2447; }
+
+/* white/opacity backgrounds */
+.dark .bg-white\/60  { background-color: rgba(38,30,58,0.70) !important; }
+.dark .bg-white\/70  { background-color: rgba(38,30,58,0.80) !important; }
+.dark .bg-white\/80  { background-color: rgba(38,30,58,0.90) !important; }
+.dark .bg-white\/90  { background-color: rgba(38,30,58,0.95) !important; }
+.dark .bg-white      { background-color: #2E2447 !important; }
+
+/* borders */
+.dark .border-white\/40  { border-color: rgba(255,255,255,0.08) !important; }
+.dark .border-white\/60  { border-color: rgba(255,255,255,0.06) !important; }
+.dark .border-\[\#EFEBF5\] { border-color: #2E2447; }
+.dark .border-\[\#F4F1FA\] { border-color: #2E2447; }
+
+/* sidebar */
+.dark .shadow-claySidebar { box-shadow: 20px 0px 60px rgba(0,0,0,0.4), -2px 0 0 rgba(255,255,255,0.04); }
+
+/* dark mode card shadow */
+.dark .shadow-clayCard     { box-shadow: 12px 12px 24px rgba(0,0,0,0.4), -4px -4px 12px rgba(255,255,255,0.02), inset 2px 2px 6px rgba(255,255,255,0.04), inset -2px -2px 6px rgba(0,0,0,0.3); }
+.dark .shadow-clayCardHover{ box-shadow: 16px 16px 32px rgba(0,0,0,0.5), -6px -6px 16px rgba(255,255,255,0.03), inset 2px 2px 6px rgba(255,255,255,0.05), inset -2px -2px 6px rgba(0,0,0,0.4); }
+.dark .shadow-clayDeep     { box-shadow: 30px 30px 60px rgba(0,0,0,0.5), -10px -10px 30px rgba(255,255,255,0.02), inset 4px 4px 12px rgba(255,255,255,0.03), inset -4px -4px 12px rgba(0,0,0,0.4); }
+.dark .shadow-clayPressed  { box-shadow: inset 8px 8px 16px rgba(0,0,0,0.5), inset -4px -4px 8px rgba(255,255,255,0.04); }
+
+/* misc dark overrides */
+.dark .bg-violet-50  { background-color: rgba(109,40,217,0.15) !important; }
+.dark .bg-purple-50  { background-color: rgba(88,28,135,0.15) !important; }
+.dark .bg-violet-100 { background-color: rgba(109,40,217,0.2) !important; }
+.dark .bg-red-50     { background-color: rgba(239,68,68,0.15) !important; }
+.dark .bg-red-100    { background-color: rgba(239,68,68,0.2) !important; }
+.dark .bg-amber-100  { background-color: rgba(245,158,11,0.2) !important; }
+.dark .bg-emerald-100{ background-color: rgba(16,185,129,0.2) !important; }
+.dark .bg-gray-100   { background-color: rgba(255,255,255,0.08) !important; }
+.dark .bg-indigo-50  { background-color: rgba(99,102,241,0.15) !important; }
+.dark .bg-indigo-100 { background-color: rgba(99,102,241,0.2) !important; }
+
+.dark .text-violet-700 { color: #A78BFA; }
+.dark .text-emerald-700{ color: #34D399; }
+.dark .text-red-600    { color: #F87171; }
+.dark .text-amber-600  { color: #FCD34D; }
+.dark .from-violet-50  { --tw-gradient-from: rgba(109,40,217,0.15); }
+.dark .to-purple-50    { --tw-gradient-to: rgba(88,28,135,0.15); }
