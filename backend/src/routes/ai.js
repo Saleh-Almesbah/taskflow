@@ -48,8 +48,11 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
       },
       body: JSON.stringify({
         model: 'tencent/hy3-preview:free',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1024,
+        messages: [
+          { role: 'system', content: 'You are a JSON API. Output ONLY valid JSON. No thinking. No reasoning. No explanations. Just the raw JSON object.' },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 2048,
       }),
     });
 
@@ -63,7 +66,6 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
     const content = aiData.choices?.[0]?.message?.content
       || aiData.choices?.[0]?.message?.reasoning
       || '';
-    console.log('AI raw response:', content);
     if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
 
     const raw = content.trim();
@@ -147,8 +149,11 @@ Rules:
       },
       body: JSON.stringify({
         model: 'tencent/hy3-preview:free',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1024,
+        messages: [
+          { role: 'system', content: 'You are a JSON API. Output ONLY valid JSON. No thinking. No reasoning. No explanations. Just the raw JSON object.' },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 2048,
       }),
     });
 
@@ -162,7 +167,6 @@ Rules:
     const content = aiData.choices?.[0]?.message?.content
       || aiData.choices?.[0]?.message?.reasoning
       || '';
-    console.log('AI raw response:', content);
     if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
 
     const raw = content.trim();
