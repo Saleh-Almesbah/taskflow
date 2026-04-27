@@ -2,6 +2,15 @@ import { Router } from 'express';
 import supabase from '../lib/supabase.js';
 import { requireAuth } from '../middleware/auth.js';
 
+function extractJSON(text) {
+  let depth = 0, start = -1;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '{') { if (depth === 0) start = i; depth++; }
+    else if (text[i] === '}') { depth--; if (depth === 0 && start !== -1) return text.slice(start, i + 1); }
+  }
+  return null;
+}
+
 const router = Router();
 router.use(requireAuth);
 
@@ -68,9 +77,8 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
       || '';
     if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
 
-    const raw = content.trim();
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
+    const jsonStr = extractJSON(content) || content.trim();
+    const parsed = JSON.parse(jsonStr);
 
     const orderedTasks = parsed.ordered_ids
       .map(id => tasks.find(t => t.id === id))
@@ -169,9 +177,8 @@ Rules:
       || '';
     if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
 
-    const raw = content.trim();
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
+    const jsonStr = extractJSON(content) || content.trim();
+    const parsed = JSON.parse(jsonStr);
 
     res.json(parsed);
   } catch (err) {
