@@ -61,7 +61,7 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
           { role: 'system', content: 'You are a JSON API. Output ONLY valid JSON. No thinking. No reasoning. No explanations. Just the raw JSON object.' },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 2048,
+        max_tokens: 8192,
       }),
     });
 
@@ -161,7 +161,7 @@ Rules:
           { role: 'system', content: 'You are a JSON API. Output ONLY valid JSON. No thinking. No reasoning. No explanations. Just the raw JSON object.' },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 2048,
+        max_tokens: 8192,
       }),
     });
 
