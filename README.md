@@ -1,9 +1,8 @@
 # TaskFlow
 
-A full-stack task management web application with AI-powered prioritization.
+A full-stack task management web application with AI-powered task management.
 
-**Live Demo (website link) :** [taskflow-nine-nu.vercel.app](https://taskflow-nine-nu.vercel.app)  
-
+**Live Demo:** [taskflow-nine-nu.vercel.app](https://taskflow-nine-nu.vercel.app)
 
 ---
 
@@ -14,7 +13,7 @@ A full-stack task management web application with AI-powered prioritization.
 | Frontend | React 19, Vite, Tailwind CSS |
 | Backend | Node.js, Express |
 | Database + Auth | Supabase (PostgreSQL) |
-| AI | OpenRouter API |
+| AI | OpenRouter API (LLaMA 3.1 8B) |
 | Frontend Deploy | Vercel |
 | Backend Deploy | Railway |
 
@@ -33,7 +32,9 @@ A full-stack task management web application with AI-powered prioritization.
 - Completed view — history of finished tasks
 - Account page — profile stats and password change
 - Settings page — customize task defaults
-- **AI Prioritizer** — analyzes your active tasks and suggests the optimal order with reasoning and productivity tips
+- Dark mode with persistent preference
+- English / Arabic language switching with full RTL support
+- **AI Assistant** — chat with an AI to create, edit, delete, or prioritize tasks using natural language
 
 ---
 
@@ -66,7 +67,7 @@ npm run dev
 PORT=4000
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-GEMINI_API_KEY=your_gemini_api_key
+OPENROUTER_API_KEY=your_openrouter_api_key
 FRONTEND_URL=http://localhost:5173
 ```
 
@@ -130,19 +131,27 @@ Row Level Security ensures users can only access their own tasks.
 
 ## AI Feature
 
-The **AI Prioritizer** button sends all active tasks to Google Gemini with a structured prompt. The AI returns:
-- A recommended task order based on deadlines, priorities, and workload
-- A strategy summary explaining the reasoning
-- 3 actionable productivity tips
+The **AI Assistant** opens as a chat panel. Users type natural language commands and the AI performs real actions on their tasks:
 
-**Model used:** `gemini-1.5-flash`  
-**Why:** Fast, free tier available, reliable JSON output
+- *"Create a task to finish the report due Friday with high priority"* → creates the task
+- *"Delete the groceries task"* → deletes it
+- *"Prioritize my tasks"* → suggests an optimal order
+- *"Mark the first task as done"* → updates the status
+
+**How it works:**
+1. The user's message is sent to the backend along with their current task list
+2. The backend sends a structured prompt to OpenRouter (LLaMA 3.1 8B Instruct, free tier)
+3. The AI returns strict JSON: `{ reply, action, payload }`
+4. The frontend executes the action via the tasks API and shows the AI's reply in chat
+
+**Model:** `meta-llama/llama-3.1-8b-instruct:free` via OpenRouter  
+**Why:** Free tier, reliable JSON output, fast response times
 
 ---
 
 ## AI Usage Notes
 
-- **Tool:** Google Gemini API (`gemini-1.5-flash`)
-- **How:** Structured prompt engineering — tasks are formatted as a numbered list with metadata, and the model is asked to return strict JSON
-- **What was accepted:** Core prompt structure, JSON parsing with regex fallback
-- **What was adjusted:** Added specific formatting instructions ("no markdown, no code blocks") to ensure clean JSON output every time
+- **Tool:** OpenRouter API (`meta-llama/llama-3.1-8b-instruct:free`)
+- **How:** Structured prompt engineering — tasks are formatted as a numbered list with metadata and UUIDs, and the model is instructed to return strict JSON with an action type and payload
+- **What was accepted:** Core prompt structure, JSON parsing with regex fallback, action/payload schema design
+- **What was adjusted:** Added explicit formatting rules ("no markdown, no code blocks"), defined exact payload shapes per action type, added today's date injection so the AI understands relative deadlines like "tomorrow"
