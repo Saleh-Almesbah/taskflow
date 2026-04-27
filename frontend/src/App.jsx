@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext.jsx';
+import { LanguageProvider } from './contexts/LanguageContext.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Tasks from './pages/Tasks.jsx';
@@ -26,6 +27,7 @@ function PublicRoute({ children }) {
 
 export default function App() {
   return (
+    <LanguageProvider>
     <Routes>
       <Route path="/" element={<Navigate to="/tasks" replace />} />
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
@@ -37,5 +39,6 @@ export default function App() {
       <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/tasks" replace />} />
     </Routes>
+    </LanguageProvider>
   );
 }

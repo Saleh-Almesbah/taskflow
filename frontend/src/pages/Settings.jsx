@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Layout from '../components/Layout.jsx';
+import { useLanguage } from '../contexts/LanguageContext.jsx';
 
 const DEFAULTS = { defaultPriority: 'medium', defaultStatus: 'todo', confirmDelete: true };
 
@@ -21,7 +22,7 @@ function Toggle({ checked, onChange, label, description }) {
           checked ? 'bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] shadow-clayButton' : 'shadow-clayPressed bg-[#EFEBF5]'
         }`}
       >
-        <span className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ${checked ? 'translate-x-5' : ''}`} />
+        <span className={`absolute top-1 start-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ${checked ? 'translate-x-5' : ''}`} />
       </button>
       <div>
         <p className="text-sm font-bold text-[#332F3A] group-hover:text-[#7C3AED] transition-colors">{label}</p>
@@ -32,6 +33,7 @@ function Toggle({ checked, onChange, label, description }) {
 }
 
 export default function Settings() {
+  const { t } = useLanguage();
   const [settings, setSettings] = useState(load);
 
   function save(next) {
@@ -41,44 +43,44 @@ export default function Settings() {
   }
 
   const techStack = [
-    { label: 'Frontend',  value: 'React 19 + Vite',       emoji: '⚛️' },
-    { label: 'Styling',   value: 'Tailwind CSS',           emoji: '🎨' },
-    { label: 'Backend',   value: 'Node.js + Express',      emoji: '🚀' },
-    { label: 'Database',  value: 'Supabase (PostgreSQL)',  emoji: '🗄️' },
-    { label: 'Auth',      value: 'Supabase Auth',          emoji: '🔐' },
-    { label: 'AI',        value: 'Google Gemini',          emoji: '✨' },
+    { label: 'Frontend',  value: 'React 19 + Vite',        emoji: '⚛️' },
+    { label: 'Styling',   value: 'Tailwind CSS',            emoji: '🎨' },
+    { label: 'Backend',   value: 'Node.js + Express',       emoji: '🚀' },
+    { label: 'Database',  value: 'Supabase (PostgreSQL)',   emoji: '🗄️' },
+    { label: 'Auth',      value: 'Supabase Auth',           emoji: '🔐' },
+    { label: 'AI',        value: 'OpenRouter (LLaMA 3.1)',  emoji: '✨' },
   ];
 
   return (
     <Layout>
       <div className="p-6 max-w-2xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-black text-[#332F3A]" style={{ fontFamily: 'Nunito, sans-serif' }}>Settings ⚙️</h1>
-          <p className="text-sm text-[#635F69] font-medium mt-0.5">Customize your TaskFlow experience</p>
+          <h1 className="text-2xl font-black text-[#332F3A]" style={{ fontFamily: 'Nunito, sans-serif' }}>{t.settingsTitle}</h1>
+          <p className="text-sm text-[#635F69] font-medium mt-0.5">{t.settingsSubtitle}</p>
         </div>
 
         {/* Task Defaults */}
         <div className="card-clay p-7 mb-6">
-          <h2 className="text-base font-black text-[#332F3A] mb-1" style={{ fontFamily: 'Nunito, sans-serif' }}>Task Defaults</h2>
-          <p className="text-sm text-[#635F69] font-medium mb-6">Pre-fill values when creating new tasks</p>
+          <h2 className="text-base font-black text-[#332F3A] mb-1" style={{ fontFamily: 'Nunito, sans-serif' }}>{t.taskDefaultsTitle}</h2>
+          <p className="text-sm text-[#635F69] font-medium mb-6">{t.taskDefaultsSubtitle}</p>
           <div className="space-y-5">
             <div>
-              <label className="label-clay">Default Priority</label>
+              <label className="label-clay">{t.defaultPriorityLabel}</label>
               <select className="input-clay max-w-xs"
                 value={settings.defaultPriority}
                 onChange={e => save({ ...settings, defaultPriority: e.target.value })}>
-                <option value="high">🔴 High</option>
-                <option value="medium">🟡 Medium</option>
-                <option value="low">🟢 Low</option>
+                <option value="high">{t.highOpt}</option>
+                <option value="medium">{t.mediumOpt}</option>
+                <option value="low">{t.lowOpt}</option>
               </select>
             </div>
             <div>
-              <label className="label-clay">Default Status</label>
+              <label className="label-clay">{t.defaultStatusLabel}</label>
               <select className="input-clay max-w-xs"
                 value={settings.defaultStatus}
                 onChange={e => save({ ...settings, defaultStatus: e.target.value })}>
-                <option value="todo">To Do</option>
-                <option value="in_progress">In Progress</option>
+                <option value="todo">{t.todoOpt}</option>
+                <option value="in_progress">{t.inProgressOpt}</option>
               </select>
             </div>
           </div>
@@ -86,20 +88,20 @@ export default function Settings() {
 
         {/* Behavior */}
         <div className="card-clay p-7 mb-6">
-          <h2 className="text-base font-black text-[#332F3A] mb-1" style={{ fontFamily: 'Nunito, sans-serif' }}>Behavior</h2>
-          <p className="text-sm text-[#635F69] font-medium mb-6">Control how the app behaves</p>
+          <h2 className="text-base font-black text-[#332F3A] mb-1" style={{ fontFamily: 'Nunito, sans-serif' }}>{t.behaviorTitle}</h2>
+          <p className="text-sm text-[#635F69] font-medium mb-6">{t.behaviorSubtitle}</p>
           <Toggle
             checked={settings.confirmDelete}
             onChange={val => save({ ...settings, confirmDelete: val })}
-            label="Confirm before deleting"
-            description="Show a dialog before permanently deleting a task"
+            label={t.confirmDeleteLabel}
+            description={t.confirmDeleteDesc}
           />
         </div>
 
         {/* About / Tech Stack */}
         <div className="card-clay p-7">
-          <h2 className="text-base font-black text-[#332F3A] mb-1" style={{ fontFamily: 'Nunito, sans-serif' }}>About TaskFlow</h2>
-          <p className="text-sm text-[#635F69] font-medium mb-6">Built with modern tools</p>
+          <h2 className="text-base font-black text-[#332F3A] mb-1" style={{ fontFamily: 'Nunito, sans-serif' }}>{t.aboutTitle}</h2>
+          <p className="text-sm text-[#635F69] font-medium mb-6">{t.aboutSubtitle}</p>
           <div className="space-y-2">
             {techStack.map(r => (
               <div key={r.label} className="flex items-center justify-between py-3 border-b border-[#F4F1FA] last:border-0">
@@ -112,7 +114,7 @@ export default function Settings() {
             ))}
           </div>
           <div className="mt-6 pt-6 border-t border-[#F4F1FA] flex items-center justify-between">
-            <span className="text-xs font-bold text-[#9995A0] uppercase tracking-widest">Version</span>
+            <span className="text-xs font-bold text-[#9995A0] uppercase tracking-widest">{t.versionLabel}</span>
             <span className="badge-clay bg-gradient-to-br from-[#A78BFA] to-[#7C3AED] text-white shadow-clayButton">v1.0.0</span>
           </div>
         </div>

@@ -80,4 +80,88 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
   }
 });
 
+router.post('/chat', async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message?.trim()) return res.status(400).json({ error: 'Message is required' });
+
+    const { data: tasks, error } = await supabase
+      .from('tasks')
+      .select('id, title, description, priority, status, due_date, category')
+      .eq('user_id', req.user.id);
+
+    if (error) return res.status(500).json({ error: error.message });
+
+    const taskList = tasks.length > 0
+      ? tasks.map((t, i) =>
+          `${i + 1}. [ID: ${t.id}] "${t.title}"` +
+          (t.description ? ` — ${t.description}` : '') +
+          ` | Priority: ${t.priority} | Status: ${t.status}` +
+          (t.due_date ? ` | Due: ${t.due_date}` : '') +
+          (t.category ? ` | Category: ${t.category}` : '')
+        ).join('\n')
+      : 'No tasks yet.';
+
+    const today = new Date().toISOString().split('T')[0];
+
+    const prompt = `You are a task management AI assistant. Today is ${today}.
+
+The user's current tasks:
+${taskList}
+
+User message: "${message}"
+
+Respond with valid JSON only, no markdown, no code blocks:
+{
+  "reply": "Your friendly conversational response",
+  "action": "create" | "update" | "delete" | "prioritize" | "none",
+  "payload": {}
+}
+
+Payload shapes per action:
+- create:     { "title": "...", "description": "...", "priority": "low|medium|high", "status": "todo|in_progress|done", "due_date": "YYYY-MM-DD or null", "category": "..." }
+- update:     { "id": "exact-uuid-from-list", "changes": { fields to update } }
+- delete:     { "id": "exact-uuid-from-list" }
+- prioritize: { "ordered_ids": ["id1", "id2", ...] }
+- none:       {}
+
+Rules:
+- Extract all task details from the user message when creating.
+- Match tasks by name to their exact UUID when updating or deleting.
+- If you cannot identify a specific task, use action "none" and ask for clarification.
+- Be friendly and concise.`;
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': process.env.FRONTEND_URL,
+        'X-Title': 'TaskFlow',
+      },
+      body: JSON.stringify({
+        model: 'meta-llama/llama-3.1-8b-instruct:free',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1024,
+      }),
+    });
+
+    const aiData = await response.json();
+
+    if (!response.ok) {
+      console.error('OpenRouter error:', aiData);
+      return res.status(500).json({ error: 'AI service error. Please try again.' });
+    }
+
+    const raw = aiData.choices[0].message.content.trim();
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
+
+    res.json(parsed);
+  } catch (err) {
+    console.error('AI chat error:', err.message);
+    res.status(500).json({ error: 'AI chat failed. Please try again.' });
+  }
+});
+
 export default router;

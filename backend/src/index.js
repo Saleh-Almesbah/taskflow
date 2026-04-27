@@ -13,6 +13,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.get('/', (_, res) => res.json({ name: 'TaskFlow API', version: '1.0.0', status: 'running' }));
 app.get('/health', (_, res) => res.json({ status: 'ok' }));
 
 app.use('/api/tasks', tasksRouter);
