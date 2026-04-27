@@ -60,7 +60,13 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
       return res.status(500).json({ error: 'AI service error. Please try again.' });
     }
 
-    const raw = aiData.choices[0].message.content.trim();
+    const content = aiData.choices?.[0]?.message?.content
+      || aiData.choices?.[0]?.message?.reasoning
+      || '';
+    console.log('AI raw response:', content);
+    if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
+
+    const raw = content.trim();
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
 
@@ -153,7 +159,13 @@ Rules:
       return res.status(500).json({ error: 'AI service error. Please try again.' });
     }
 
-    const raw = aiData.choices[0].message.content.trim();
+    const content = aiData.choices?.[0]?.message?.content
+      || aiData.choices?.[0]?.message?.reasoning
+      || '';
+    console.log('AI raw response:', content);
+    if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
+
+    const raw = content.trim();
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
 
