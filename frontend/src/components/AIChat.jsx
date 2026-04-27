@@ -34,27 +34,33 @@ export default function AIChat({ onClose, onRefresh }) {
       const { data } = await api.post('/api/ai/chat', { message: text });
 
       let actionLabel = null;
+      let actionError = null;
 
-      if (data.action === 'create' && data.payload?.title) {
-        await api.post('/api/tasks', data.payload);
-        actionLabel = '✓ Task created';
-        onRefresh();
-      } else if (data.action === 'update' && data.payload?.id) {
-        await api.put(`/api/tasks/${data.payload.id}`, data.payload.changes);
-        actionLabel = '✓ Task updated';
-        onRefresh();
-      } else if (data.action === 'delete' && data.payload?.id) {
-        await api.delete(`/api/tasks/${data.payload.id}`);
-        actionLabel = '✓ Task deleted';
-        onRefresh();
-      } else if (data.action === 'prioritize') {
-        actionLabel = '✓ Tasks prioritized';
-        onRefresh();
+      try {
+        if (data.action === 'create' && data.payload?.title) {
+          await api.post('/api/tasks', data.payload);
+          actionLabel = '✓ Task created';
+          onRefresh();
+        } else if (data.action === 'update' && data.payload?.id) {
+          await api.put(`/api/tasks/${data.payload.id}`, data.payload.changes);
+          actionLabel = '✓ Task updated';
+          onRefresh();
+        } else if (data.action === 'delete' && data.payload?.id) {
+          await api.delete(`/api/tasks/${data.payload.id}`);
+          actionLabel = '✓ Task deleted';
+          onRefresh();
+        } else if (data.action === 'prioritize') {
+          actionLabel = '✓ Tasks prioritized';
+          onRefresh();
+        }
+      } catch (actionErr) {
+        actionError = actionErr.response?.data?.errors?.[0]?.msg || actionErr.response?.data?.error || 'Action failed';
+        console.error('AI action error:', actionErr.response?.data || actionErr.message);
       }
 
       setMessages(m => [...m, {
         role: 'ai',
-        text: data.reply || 'Done!',
+        text: actionError ? `${data.reply || 'Done!'}\n\n⚠️ But the action failed: ${actionError}` : (data.reply || 'Done!'),
         actionLabel,
         time: new Date(),
       }]);
