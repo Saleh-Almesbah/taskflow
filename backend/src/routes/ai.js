@@ -69,13 +69,13 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
 
     if (!response.ok) {
       console.error('OpenRouter error:', aiData);
-      return res.status(500).json({ error: 'AI service error. Please try again.' });
+      return res.status(500).json({ error: 'Sorry, a problem came up. Please try again in 2-3 minutes.' });
     }
 
     const content = aiData.choices?.[0]?.message?.content
       || aiData.choices?.[0]?.message?.reasoning
       || '';
-    if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
+    if (!content) return res.status(500).json({ error: 'Sorry, a problem came up. Please try again in 2-3 minutes.' });
 
     const jsonStr = extractJSON(content) || content.trim();
     const parsed = JSON.parse(jsonStr);
@@ -92,7 +92,7 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
     });
   } catch (err) {
     console.error('AI prioritize error:', err.message);
-    res.status(500).json({ error: 'AI analysis failed. Please try again.' });
+    res.status(500).json({ error: 'Sorry, a problem came up. Please try again in 2-3 minutes.' });
   }
 });
 
@@ -169,13 +169,13 @@ Rules:
 
     if (!response.ok) {
       console.error('OpenRouter error:', aiData);
-      return res.status(500).json({ error: 'AI service error. Please try again.' });
+      return res.status(500).json({ error: 'Sorry, a problem came up. Please try again in 2-3 minutes.' });
     }
 
     const content = aiData.choices?.[0]?.message?.content
       || aiData.choices?.[0]?.message?.reasoning
       || '';
-    if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
+    if (!content) return res.status(500).json({ error: 'Sorry, a problem came up. Please try again in 2-3 minutes.' });
 
     const jsonStr = extractJSON(content);
     if (!jsonStr) {
@@ -186,7 +186,7 @@ Rules:
     res.json(parsed);
   } catch (err) {
     console.error('AI chat error:', err.message);
-    res.status(500).json({ error: 'AI chat failed. Please try again.' });
+    res.status(500).json({ error: 'Sorry, a problem came up. Please try again in 2-3 minutes.' });
   }
 });
 

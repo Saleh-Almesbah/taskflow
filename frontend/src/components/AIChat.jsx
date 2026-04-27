@@ -67,10 +67,9 @@ export default function AIChat({ onClose, onRefresh }) {
     } catch {
       setMessages(m => [...m, {
         role: 'ai',
-        text: 'Sorry, I had trouble with that. Please try again.',
+        text: 'Sorry, a problem came up. Please try again in 2-3 minutes.',
         time: new Date(),
       }]);
-      toast.error('AI chat failed');
     } finally {
       setLoading(false);
     }
