@@ -47,7 +47,7 @@ Consider: deadlines, priority labels, task dependencies, and cognitive load.`;
         'X-Title': 'TaskFlow',
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct:free',
+        model: 'tencent/hy3-preview:free',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 1024,
       }),
@@ -140,7 +140,7 @@ Rules:
         'X-Title': 'TaskFlow',
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct:free',
+        model: 'tencent/hy3-preview:free',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 1024,
       }),
