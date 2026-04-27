@@ -177,9 +177,12 @@ Rules:
       || '';
     if (!content) return res.status(500).json({ error: 'AI returned empty response. Please try again.' });
 
-    const jsonStr = extractJSON(content) || content.trim();
+    const jsonStr = extractJSON(content);
+    if (!jsonStr) {
+      // Model replied conversationally instead of JSON — return it as a plain reply
+      return res.json({ reply: content.trim(), action: 'none', payload: {} });
+    }
     const parsed = JSON.parse(jsonStr);
-
     res.json(parsed);
   } catch (err) {
     console.error('AI chat error:', err.message);
